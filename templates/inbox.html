@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Inbox</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+  <h2>Inbox</h2>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="alert alert-info">
+        {% for msg in messages %}
+          <div>{{ msg }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+  {% if messages %}
+    <table class="table table-bordered table-striped mt-3">
+      <thead>
+        <tr>
+          <th>From</th>
+          <th>Message</th>
+          <th>Acknowledged?</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for msg in messages %}
+        <tr>
+          <td>{{ msg.from }}</td>
+          <td>{{ msg.content }}</td>
+          <td>{% if msg.ack %}✔️{% else %}❌{% endif %}</td>
+          <td>
+            {% if not msg.ack %}
+            <form action="{{ url_for('ack_message_route') }}" method="POST">
+              <input type="hidden" name="sender" value="{{ msg.from }}" />
+              <input type="hidden" name="content" value="{{ msg.content }}" />
+              <button type="submit" class="btn btn-sm btn-success">Acknowledge</button>
+            </form>
+            {% else %}
+              -
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="alert alert-warning">No messages in inbox.</div>
+  {% endif %}
+  <a href="{{ url_for('dashboard') }}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+</div>
+</body>
+</html>
+

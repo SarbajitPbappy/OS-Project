@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard - DHCP Server</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+
+  <h2 class="mb-4">Welcome, {{ username }}</h2>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="alert alert-info">
+        {% for msg in messages %}
+          <div>{{ msg }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {% if message %}
+    <div class="alert alert-primary">{{ message }}</div>
+  {% endif %}
+
+  {% if lease %}
+    <div class="card p-3 mb-3 bg-light">
+      <h4>Your assigned IP: <span class="text-success">{{ lease.ip }}</span></h4>
+      <p>Lease expires at: {{ lease.expiry }}</p>
+    </div>
+  {% else %}
+    <div class="alert alert-warning">You currently have no IP assigned.</div>
+  {% endif %}
+
+  <div class="mb-3">
+    <a href="{{ url_for('discover') }}" class="btn btn-primary me-2">Send DHCP DISCOVER</a>
+    <a href="{{ url_for('request_ip') }}" class="btn btn-success me-2">Send DHCP REQUEST</a>
+    <a href="{{ url_for('release') }}" class="btn btn-danger me-2">Release Lease</a>
+  </div>
+
+  <div class="mb-3">
+    <a href="{{ url_for('leases') }}" class="btn btn-outline-secondary me-2">View All Leases</a>
+    <a href="{{ url_for('inbox') }}" class="btn btn-outline-secondary me-2">Inbox</a>
+    <a href="{{ url_for('sent_msgs') }}" class="btn btn-outline-secondary me-2">Sent Messages</a>
+    <a href="{{ url_for('logout') }}" class="btn btn-outline-secondary">Logout</a>
+  </div>
+
+  <hr>
+
+  <h3>Send Message to Another Client</h3>
+  <form action="{{ url_for('send_message') }}" method="POST" class="row g-3">
+    <div class="col-md-4">
+      <input name="recipient" placeholder="Recipient Username" class="form-control" required />
+    </div>
+    <div class="col-md-6">
+      <input name="message" placeholder="Message" class="form-control" required />
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary w-100">Send</button>
+    </div>
+  </form>
+
+</div>
+</body>
+</html>
+
